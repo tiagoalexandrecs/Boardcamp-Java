@@ -10,5 +10,5 @@ import com.api.boardcamp.models.gameModel;
 
 @Repository
 public interface gamesRepository extends JpaRepository < gameModel, Long > {
-    
+    boolean existsByName(String name);
 }
