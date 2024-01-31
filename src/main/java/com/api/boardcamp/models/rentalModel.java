@@ -1,5 +1,6 @@
 package com.api.boardcamp.models;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import com.api.boardcamp.dtos.rentalDto;
@@ -48,6 +49,9 @@ public class rentalModel {
     @Column( columnDefinition = "integer default 0")
     private Integer delayFee;
 
+    @Column(nullable = false)
+    private LocalDate rentDate;
+
     @OneToOne
     @JoinColumn
     private customerModel customer;
@@ -56,13 +60,14 @@ public class rentalModel {
     @JoinColumn
     private gameModel game;
 
-    public rentalModel(rentalDto dto, gameModel game2, customerModel customer2, Integer price) {
+    public rentalModel(rentalDto dto, gameModel game2, customerModel customer2, Integer price, LocalDate date) {
         this.customerId = dto.getCustomerId();
         this.gameId = dto.getGameId();
         this.daysRented = dto.getDaysRented();
         this.customer = customer2;
         this.game = game2;
         this.originalPrice = price;
+        this.rentDate = date;
     }
 
 }

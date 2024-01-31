@@ -1,5 +1,6 @@
 package com.api.boardcamp.services;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -33,10 +34,11 @@ public class rentalService {
         if (!exists || !exists2) {
             return Optional.empty();
         } else {
+            LocalDate date = LocalDate.now();
             Optional<gameModel> game = gamesRepository.findById(dto.getGameId());
             Optional <customerModel> customer = customerRepository.findById(dto.getCustomerId());
             Integer price = game.get().getPricePerDay() * dto.getDaysRented();
-            rentalModel rent = new rentalModel(dto, game.get(), customer.get(), price );
+            rentalModel rent = new rentalModel(dto, game.get(), customer.get(), price , date);
             return Optional.of(rentalRepository.save(rent));
         }
     }
