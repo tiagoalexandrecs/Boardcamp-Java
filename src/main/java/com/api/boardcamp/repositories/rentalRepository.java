@@ -7,5 +7,5 @@ import com.api.boardcamp.models.rentalModel;
 
 @Repository
 public interface rentalRepository  extends JpaRepository<rentalModel, Long>{
-    
+    boolean existsById( Long id);
 }

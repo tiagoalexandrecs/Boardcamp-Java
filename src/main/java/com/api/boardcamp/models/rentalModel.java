@@ -44,10 +44,10 @@ public class rentalModel {
     private Integer originalPrice;
 
     @Column( columnDefinition = "string default null")
-    private String returnDate;
+    private LocalDate returnDate;
 
     @Column( columnDefinition = "integer default 0")
-    private Integer delayFee;
+    private Long delayFee;
 
     @Column(nullable = false)
     private LocalDate rentDate;
@@ -68,6 +68,29 @@ public class rentalModel {
         this.game = game2;
         this.originalPrice = price;
         this.rentDate = date;
+    }
+
+    public rentalModel (rentalModel rent, LocalDate date) {
+        this.customerId = rent.getCustomerId();
+        this.gameId = rent.getGameId();
+        this.daysRented = rent.getDaysRented();
+        this.customer = rent.getCustomer();
+        this.game = rent.getGame();
+        this.originalPrice = rent.getOriginalPrice();
+        this.rentDate = rent.getRentDate();
+        this.returnDate = date;
+    }
+
+    public rentalModel (rentalModel rent, LocalDate date, Long debt) {
+        this.customerId = rent.getCustomerId();
+        this.gameId = rent.getGameId();
+        this.daysRented = rent.getDaysRented();
+        this.customer = rent.getCustomer();
+        this.game = rent.getGame();
+        this.originalPrice = rent.getOriginalPrice();
+        this.rentDate = rent.getRentDate();
+        this.returnDate = date;
+        this.delayFee = debt;
     }
 
 }
