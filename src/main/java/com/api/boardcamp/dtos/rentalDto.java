@@ -11,12 +11,12 @@ public class rentalDto {
     @NotBlank
     @NotNull
     @Positive
-    private Integer customerId;
+    private Long customerId;
 
     @NotBlank
     @NotNull
     @Positive
-    private Integer gameId;
+    private Long gameId;
 
     @NotBlank
     @NotNull

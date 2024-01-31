@@ -2,7 +2,6 @@ package com.api.boardcamp.services;
 
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import com.api.boardcamp.dtos.customerDto;
