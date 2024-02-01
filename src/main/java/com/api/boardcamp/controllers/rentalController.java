@@ -43,23 +43,15 @@ public class rentalController {
 
     @PostMapping("")
     public ResponseEntity<Object> createRent(@RequestBody @Valid rentalDto dto) {
-        Optional<rentalModel> rent = rentalService.save(dto);
-        if (rent.isPresent()) {
+            rentalModel rent = rentalService.save(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(rent);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found");
-        }
-
     }
 
     @PutMapping("{id}/return")
     public ResponseEntity<Object> updateRent (@PathVariable Long id) {
-        Optional<rentalModel> update = rentalService.update(id);
-        if(update.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(update);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found");
-        }
+        rentalModel update = rentalService.update(id);
+        return ResponseEntity.status(HttpStatus.OK).body(update);
+        
     }
     
 }

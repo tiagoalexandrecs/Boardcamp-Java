@@ -1,14 +1,15 @@
 package com.api.boardcamp.services;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.api.boardcamp.dtos.rentalDto;
+import com.api.boardcamp.exceptions.CustomerNotFoundException;
+import com.api.boardcamp.exceptions.GameNotFoundException;
+import com.api.boardcamp.exceptions.RentNotFoundException;
 import com.api.boardcamp.models.customerModel;
 import com.api.boardcamp.models.gameModel;
 import com.api.boardcamp.models.rentalModel;
@@ -30,63 +31,52 @@ public class rentalService {
         this.customerRepository = customerRepository;
     }
 
-    public Optional<rentalModel> save(rentalDto dto) {
-        boolean exists = gamesRepository.existsById(dto.getGameId());
-        boolean exists2 = customerRepository.existsById(dto.getCustomerId());
-
-        if (!exists || !exists2) {
-            return Optional.empty();
-        } else {
+    public rentalModel save(rentalDto dto) {
+        
             LocalDate date = LocalDate.now();
-            Optional<gameModel> game = gamesRepository.findById(dto.getGameId());
-            Optional <customerModel> customer = customerRepository.findById(dto.getCustomerId());
-            Integer price = game.get().getPricePerDay() * dto.getDaysRented();
-            rentalModel rent = new rentalModel(dto, game.get(), customer.get(), price , date);
-            return Optional.of(rentalRepository.save(rent));
+            gameModel game = gamesRepository.findById(dto.getGameId()).orElseThrow(() -> new GameNotFoundException("This game has not been found in the stock!"));
+            customerModel customer = customerRepository.findById(dto.getCustomerId()).orElseThrow(() -> new CustomerNotFoundException("This customer is not registered in the database!"));
+            Integer price = game.getPricePerDay() * dto.getDaysRented();
+            rentalModel rent = new rentalModel(dto, game, customer, price , date);
+            return rentalRepository.save(rent);
         }
-    }
 
     public List<rentalModel> findAll() {
         List<rentalModel> rents = rentalRepository.findAll();
         return rents;
     }
 
-    public Optional<rentalModel> update(Long id) {
-        boolean exists = rentalRepository.existsById(id);
-        if (exists) {
-            Optional<rentalModel> rent = rentalRepository.findById(id);
+    public rentalModel update(Long id) {
+            
+            rentalModel rent = rentalRepository.findById(id).orElseThrow(() -> new RentNotFoundException("The rent register has not been found"));
 
             LocalDate now = LocalDate.now();
             Timestamp timestamp = Timestamp.valueOf(now.atStartOfDay());
             Long nowMili = timestamp.getTime();
 
-            LocalDate rentDate = rent.get().getRentDate();
+            LocalDate rentDate = rent.getRentDate();
             Timestamp timestampRent = Timestamp.valueOf(rentDate.atStartOfDay());
             Long rentMili = timestampRent.getTime();
 
-            Integer interval = rent.get().getDaysRented() * 86400000;
+            Integer interval = rent.getDaysRented() * 86400000;
 
             Long difference = nowMili - rentMili;
 
             if (difference <= interval) {
-                rentalModel updated = new rentalModel(rent.get(), now);
+                rentalModel updated = new rentalModel(rent, now);
                 updated.setId(id);
-                return Optional.of(rentalRepository.save(updated));
-            } else if ( difference > interval) {
+                return rentalRepository.save(updated);
+            } else {
                 Long delay = difference - interval;
                 Long days = delay / 86400000;
-                Long debt = rent.get().getGame().getPricePerDay() * days;
+                Long debt = rent.getGame().getPricePerDay() * days;
 
-                rentalModel updated = new rentalModel(rent.get(), now, debt);
+                rentalModel updated = new rentalModel(rent, now, debt);
                 updated.setId(id);
                 rentalModel done = rentalRepository.save(updated);
-                return Optional.of(done);
+                return (done);
             }
 
-        } else {
-            return Optional.empty();
-        }
+        } 
     }
 
-
-}
