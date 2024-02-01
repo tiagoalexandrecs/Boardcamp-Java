@@ -35,23 +35,14 @@ public class customerController {
     
     @GetMapping("{id}")
     public ResponseEntity<Object> getCustomerById (@PathVariable("id") Long id) {
-        Optional <customerModel> customer = customerService.findById(id);
-
-        if(customer.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(customer);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This customer does not exist");
-        }
+        customerModel customer = customerService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(customer);
     }
 
     @PostMapping()
     public ResponseEntity<Object> createCustomer(@RequestBody @Valid customerDto dto) {
-        Optional <customerModel> customer = customerService.save(dto);
-        if (customer.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(customer);
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("A customer with this Cpf is already registered");
-        }
+        customerModel customer = customerService.save(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(customer);
     }
        
 }

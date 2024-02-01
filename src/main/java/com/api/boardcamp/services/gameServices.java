@@ -3,6 +3,7 @@ package com.api.boardcamp.services;
 import org.springframework.stereotype.Service;
 
 import com.api.boardcamp.dtos.gameDto;
+import com.api.boardcamp.exceptions.ConflictException;
 import com.api.boardcamp.models.gameModel;
 import com.api.boardcamp.repositories.gamesRepository;
 import java.util.List;
@@ -21,13 +22,13 @@ public class gameServices {
         return gamesRepository.findAll();
     }
 
-    public Optional<gameModel> save (gameDto dto) {
+    public gameModel save (gameDto dto) {
         boolean exists = gamesRepository.existsByName(dto.getName());
         if (exists) {
-            return Optional.empty();
+            throw new ConflictException("Such a game already exists in our stock");
         } else {
             gameModel game = new gameModel(dto);
-            return Optional.of(gamesRepository.save(game));
+            return gamesRepository.save(game);
         }
     }
     
