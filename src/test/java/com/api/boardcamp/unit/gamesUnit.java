@@ -50,9 +50,11 @@ public class gamesUnit {
         gameDto game = new gameDto("Game","link da imagem",2, 4500);
         doReturn(false).when(gamesRepository).existsByName(any());
         gameModel newGame = new gameModel(game);
-
+        
+        doReturn(newGame).when(gamesRepository).save(any());
         gameModel result = gameServices.save(game);
-
+        
+        assertNotNull(result);
         verify(gamesRepository, times(1)).existsByName(any());
         verify(gamesRepository, times(1)).save(any());
         assertEquals(newGame, result);
