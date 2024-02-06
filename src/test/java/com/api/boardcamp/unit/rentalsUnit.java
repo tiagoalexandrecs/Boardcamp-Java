@@ -121,9 +121,11 @@ public class rentalsUnit {
         doReturn(Optional.of(newGame)).when(gamesRepository).findById(any());
         doReturn(Optional.of(newCustomer)).when(customerRepository).findById(any());
         doReturn(categories).when(rentalRepository).findByGameId(any());
+        doReturn(newRent).when(rentalRepository).save(any());
 
         rentalModel result = rentalService.save(rent);
-
+        
+        assertNotNull(result);
         verify(gamesRepository, times(1)).findById(any());
         verify(customerRepository, times(1)).findById(any());
         verify(rentalRepository, times(1)).findByGameId(any());
