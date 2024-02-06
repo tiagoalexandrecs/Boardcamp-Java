@@ -8,6 +8,11 @@ import jakarta.validation.constraints.Size;
 @Data
 public class customerDto {
     
+    public customerDto(String string, String string2) {
+        this.name = string;
+        this.cpf = string2;
+    }
+
     @NotBlank
     @NotNull
     private String name;

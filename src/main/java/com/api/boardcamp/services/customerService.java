@@ -17,7 +17,7 @@ public class customerService {
     }
 
     public customerModel findById(Long id) {
-        return customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("This customer has not been found n the database"));
+        return customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("This customer has not been found in the database"));
     }
 
     public customerModel save (customerDto dto) {

@@ -8,6 +8,12 @@ import jakarta.validation.constraints.Positive;
 @Data
 public class rentalDto {
 
+    public rentalDto(Long customerId, Long gameId, Integer daysRented) {
+        this.customerId = customerId;
+        this.gameId = gameId;
+        this.daysRented = daysRented;
+    }
+
     @NotBlank
     @NotNull
     @Positive

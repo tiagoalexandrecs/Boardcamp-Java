@@ -25,4 +25,11 @@ public class gameDto {
     @NotNull
     @Positive
     private Integer pricePerDay;
+
+    public gameDto(String name, String image, Integer stockTotal, Integer pricePerDay) {
+        this.name = name;
+        this.image = image;
+        this.stockTotal = stockTotal;
+        this.pricePerDay = pricePerDay;
+    }
 }
