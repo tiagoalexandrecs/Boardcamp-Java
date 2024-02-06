@@ -40,7 +40,7 @@ public class rentalService {
             Integer price = game.getPricePerDay() * dto.getDaysRented();
 
             List<rentalModel> amount = rentalRepository.findByGameId(game.getId());
-            if ( amount.size() > game.getStockTotal()) {
+            if ( amount.size() == game.getStockTotal()) {
                 throw new UnprocessableEntityException("Our stock has ran out of this game!Please, await until they're available again");
             } else {
                 rentalModel rent = new rentalModel(dto, game, customer, price , date);
