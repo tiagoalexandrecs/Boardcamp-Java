@@ -62,8 +62,11 @@ public class customersUnit {
         doReturn(false).when(customerRepository).existsByCpf(any());
         customerModel newCustomer = new customerModel(customer);
 
+        doReturn(newCustomer).when(customerRepository).save(any());
+
         customerModel result = customerService.save(customer);
 
+        assertNotNull(result);
         verify(customerRepository, times(1)).existsByCpf(any());
         verify(customerRepository, times(1)).save(any());
         assertEquals(newCustomer, result);

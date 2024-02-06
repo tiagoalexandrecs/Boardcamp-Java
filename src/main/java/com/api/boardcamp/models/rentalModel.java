@@ -12,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -52,12 +51,12 @@ public class rentalModel {
     @Column(nullable = false)
     private LocalDate rentDate;
 
-    @OneToOne
-    @JoinColumn
+    @ManyToOne
+    @JoinColumn(name= "customer")
     private customerModel customer;
 
-    @OneToOne
-    @JoinColumn
+    @ManyToOne
+    @JoinColumn(name= "game")
     private gameModel game;
 
     public rentalModel(rentalDto dto, gameModel game2, customerModel customer2, Integer price, LocalDate date) {
