@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.api.boardcamp.dtos.customerDto;
-import com.api.boardcamp.exceptions.CustomerNotFoundException;
 import com.api.boardcamp.models.customerModel;
 import com.api.boardcamp.repositories.customerRepository;
 
@@ -43,13 +42,7 @@ public class customerIntegrationTests {
     @Test
     void givenUnregisteredCustomer_whenSearching_thenThrowsError() {
        
-        ResponseEntity<String> response = restTemplate.exchange(
-        "/customers/:id",
-        HttpMethod.GET,
-        null,
-        String.class,
-        1
-        );
+        ResponseEntity<String> response = restTemplate.getForEntity("/customers/1", String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
@@ -74,6 +67,7 @@ public class customerIntegrationTests {
 	assertEquals(1, customerRepository.count()); 
    }
 
+   @Test
    void givenRepeatedCustomer_whenCreatingCustomer_thenThrowsError() {
     // given
     customerDto customer = new customerDto("Name", "12345678921");
@@ -105,13 +99,7 @@ void givenRegisteredCustomer_whenSearching_thenReturns() {
   
     customerRepository.save(newCustomer);
    
-    ResponseEntity<customerModel> response = restTemplate.exchange(
-    "/customers/:id",
-    HttpMethod.GET,
-    null,
-    customerModel.class,
-    newCustomer.getId()
-    );
+    ResponseEntity<customerModel> response = restTemplate.getForEntity("/customers/"+newCustomer.getId(), customerModel.class);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
 }
