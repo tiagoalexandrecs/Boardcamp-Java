@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity  
-@Table(name="rents")
+@Table(name="rentals")
 public class rentalModel {
     
     @Id // Identifica que é o id, a chave primária da tabela

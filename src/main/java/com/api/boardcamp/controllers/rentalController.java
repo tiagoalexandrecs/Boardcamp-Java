@@ -38,7 +38,7 @@ public class rentalController {
         return ResponseEntity.status(HttpStatus.OK).body(rents);
     }
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<Object> createRent(@RequestBody @Valid rentalDto dto) {
             rentalModel rent = rentalService.save(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(rent);
