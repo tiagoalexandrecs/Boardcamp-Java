@@ -14,6 +14,6 @@ import com.api.boardcamp.models.rentalModel;
 @Repository
 public interface rentalRepository  extends JpaRepository<rentalModel, Long>{
     boolean existsById( Long id);
-    @Query(value = "SELECT * FROM rents WHERE gameId= :id AND returnDate IS NULL", nativeQuery = true)
+    @Query(value = "SELECT * FROM rentals WHERE gameId= :id AND returnDate IS NULL", nativeQuery = true)
     public List<rentalModel> findByGameId (@Param("id") Long id);
 }
