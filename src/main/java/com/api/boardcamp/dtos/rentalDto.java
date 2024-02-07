@@ -14,17 +14,16 @@ public class rentalDto {
         this.daysRented = daysRented;
     }
 
-    @NotBlank
+
     @NotNull
     @Positive
     private Long customerId;
 
-    @NotBlank
+
     @NotNull
     @Positive
     private Long gameId;
 
-    @NotBlank
     @NotNull
     @Positive
     private Integer daysRented;

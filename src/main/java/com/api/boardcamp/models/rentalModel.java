@@ -1,7 +1,6 @@
 package com.api.boardcamp.models;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import com.api.boardcamp.dtos.rentalDto;
 
@@ -23,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity  
-@Table(name = "rentals")
+@Table(name ="rentals")
 public class rentalModel {
     
     @Id // Identifica que é o id, a chave primária da tabela

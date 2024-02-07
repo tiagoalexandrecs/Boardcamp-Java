@@ -44,7 +44,7 @@ public class rentalController {
             return ResponseEntity.status(HttpStatus.CREATED).body(rent);
     }
 
-    @PutMapping("{id}/return")
+    @PutMapping("/{id}/return")
     public ResponseEntity<Object> updateRent (@PathVariable Long id) {
         rentalModel update = rentalService.update(id);
         return ResponseEntity.status(HttpStatus.OK).body(update);
