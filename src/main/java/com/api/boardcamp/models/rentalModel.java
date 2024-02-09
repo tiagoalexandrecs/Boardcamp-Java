@@ -3,6 +3,7 @@ package com.api.boardcamp.models;
 import java.time.LocalDate;
 
 import com.api.boardcamp.dtos.rentalDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,10 +31,10 @@ public class rentalModel {
     private Long id;
 
     @Column(nullable= false)
-    private Long customerId;
+    private Long customerid;
 
     @Column(nullable= false)
-    private Long gameId;
+    private Long gameid;
 
     @Column(nullable= false)
     private Integer daysRented;
@@ -41,13 +42,15 @@ public class rentalModel {
     @Column(nullable= false)
     private Integer originalPrice;
 
-    @Column( columnDefinition = "string default null")
-    private LocalDate returnDate;
+    @Column(nullable = true)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate returnDate= null;
 
-    @Column( columnDefinition = "integer default 0")
-    private Long delayFee;
+    @Column(nullable= false)
+    private Long delayFee = 0L;
 
     @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate rentDate;
 
     @ManyToOne
@@ -59,8 +62,8 @@ public class rentalModel {
     private gameModel game;
 
     public rentalModel(rentalDto dto, gameModel game2, customerModel customer2, Integer price, LocalDate date) {
-        this.customerId = dto.getCustomerId();
-        this.gameId = dto.getGameId();
+        this.customerid= dto.getCustomerId();
+        this.gameid= dto.getGameId();
         this.daysRented = dto.getDaysRented();
         this.customer = customer2;
         this.game = game2;
@@ -69,8 +72,8 @@ public class rentalModel {
     }
 
     public rentalModel (rentalModel rent, LocalDate date) {
-        this.customerId = rent.getCustomerId();
-        this.gameId = rent.getGameId();
+        this.customerid = rent.getCustomerid();
+        this.gameid= rent.getGameid();
         this.daysRented = rent.getDaysRented();
         this.customer = rent.getCustomer();
         this.game = rent.getGame();
@@ -80,8 +83,8 @@ public class rentalModel {
     }
 
     public rentalModel (rentalModel rent, LocalDate date, Long debt) {
-        this.customerId = rent.getCustomerId();
-        this.gameId = rent.getGameId();
+        this.customerid = rent.getCustomerid();
+        this.gameid = rent.getGameid();
         this.daysRented = rent.getDaysRented();
         this.customer = rent.getCustomer();
         this.game = rent.getGame();
