@@ -48,7 +48,7 @@ public class customerIntegrationTests {
     }
 
     @Test
-    void givenValidRecipe_whenCreatingRecipe_thenCreatesRecipe() {
+    void givenValidData_whenCreatingCustomer_thenCreates() {
     // given
     customerDto customer = new customerDto("Name", "12345678921");
 
@@ -102,6 +102,7 @@ void givenRegisteredCustomer_whenSearching_thenReturns() {
     ResponseEntity<customerModel> response = restTemplate.getForEntity("/customers/"+newCustomer.getId(), customerModel.class);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(newCustomer,response.getBody());
 }
 
     
