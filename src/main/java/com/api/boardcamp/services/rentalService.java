@@ -57,7 +57,7 @@ public class rentalService {
             
             rentalModel rent = rentalRepository.findById(id).orElseThrow(() -> new RentNotFoundException("The rent register has not been found"));
 
-            if (rent.getReturnDate() == null) {
+            if (rent.getReturnDate() != null) {
                 throw new UnprocessableEntityException("This rent has already been finalized!");
             } else {
                 LocalDate now = LocalDate.now();

@@ -1,6 +1,9 @@
 package com.api.boardcamp.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,9 +46,9 @@ public class rentalsIntegrationTest {
     @BeforeEach
     @AfterEach
     public void cleanUpDatabase() {
-       gamesRepository.deleteAll();
-       customerRepository.deleteAll();
-       rentalRepository.deleteAll();
+        rentalRepository.deleteAll();
+        customerRepository.deleteAll();
+        gamesRepository.deleteAll();
     }  
 
     @Test
@@ -128,5 +131,133 @@ public class rentalsIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode()); 
 
     }
+
+    @Test
+    void givenValidData_whenRentingOverbookedGame_thenThrowsError() {
+
+        customerDto customer = new customerDto("Name", "12345678921");
+        customerModel newCustomer = new customerModel(customer);
+        customerRepository.save(newCustomer);
+        gameDto game = new gameDto("Game","link da imagem",1, 4500);
+        gameModel newGame = new gameModel(game);
+        gamesRepository.save(newGame);
+        rentalDto rent = new rentalDto(newCustomer.getId(), newGame.getId(), 3);
+        rentalModel newRent = new rentalModel(rent, newGame, newCustomer, 13500, LocalDate.now());
+        rentalRepository.save(newRent);
+
+        HttpEntity<rentalDto> body = new HttpEntity<>(rent);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+        "/rentals",      // rota
+        HttpMethod.POST, // método
+        body,            // body da requisição
+        String.class);   // tipo esperado da resposta
+
+        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.getStatusCode());
+    }
+
+    @Test
+    void givenOpenRental_whenReturning_thenReturnUpdatedRent () {
+
+        customerDto customer = new customerDto("Name", "12345678921");
+        customerModel newCustomer = new customerModel(customer);
+        customerRepository.save(newCustomer);
+        gameDto game = new gameDto("Game","link da imagem",1, 4500);
+        gameModel newGame = new gameModel(game);
+        gamesRepository.save(newGame);
+        rentalDto rent = new rentalDto(newCustomer.getId(), newGame.getId(), 3);
+        rentalModel newRent = new rentalModel(rent, newGame, newCustomer, 13500, LocalDate.now());
+        rentalRepository.save(newRent);
+
+        ResponseEntity<rentalModel> response = restTemplate.exchange(
+            "/rentals/{id}/return",
+            HttpMethod.PUT,
+            null,
+            rentalModel.class,
+            newRent.getId());
+
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(0, response.getBody().getDelayFee());
+        assertEquals(LocalDate.now(), response.getBody().getRentDate());
+        assertEquals(LocalDate.now(), response.getBody().getReturnDate());
+        assertEquals(1, rentalRepository.count());
+
+    }
+
+    @Test
+    void givenValidOpenDelayedRental_whenReturningRental_thenReturnsUpdatedRentalWithFee() {
+        
+
+        customerDto customer = new customerDto("Name", "12345678921");
+        customerModel newCustomer = new customerModel(customer);
+        customerRepository.save(newCustomer);
+        gameDto game = new gameDto("Game","link da imagem",1, 4500);
+        gameModel newGame = new gameModel(game);
+        gamesRepository.save(newGame);
+        rentalDto rent = new rentalDto(newCustomer.getId(), newGame.getId(), 3);
+       
+        LocalDate today = LocalDate.now();
+        int daysRented = 3;
+        int daysLate = 2;
+        int pricePerDay = 4500;
+        LocalDate rentDate = today.minusDays(daysRented + daysLate);
+
+        rentalModel newRent = new rentalModel(rent, newGame, newCustomer, 13500, rentDate);
+        rentalRepository.save(newRent);
+
+
+        
+
+        ResponseEntity<rentalModel> response = restTemplate.exchange(
+                "/rentals/{id}/return",
+                HttpMethod.PUT,
+                null,
+                rentalModel.class,
+                newRent.getId());
+
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(daysLate * pricePerDay, response.getBody().getDelayFee());
+        assertEquals(rentDate, response.getBody().getRentDate());
+        assertEquals(today, response.getBody().getReturnDate());
+        assertEquals(1, rentalRepository.count());
+    }
+
+    @Test
+    void givenReturnedRent_whenReturningAgain_thenThrowsError() {
+
+        customerDto customer = new customerDto("Name", "12345678921");
+        customerModel newCustomer = new customerModel(customer);
+        customerRepository.save(newCustomer);
+        gameDto game = new gameDto("Game","link da imagem",1, 4500);
+        gameModel newGame = new gameModel(game);
+        gamesRepository.save(newGame);
+        rentalDto rent = new rentalDto(newCustomer.getId(), newGame.getId(), 3);
+       
+        LocalDate today = LocalDate.now();
+        int daysRented = 3;
+        int daysLate = 2;
+        LocalDate rentDate = today.minusDays(daysRented + daysLate);
+
+        rentalModel newRent = new rentalModel(rent, newGame, newCustomer, 13500, rentDate);
+        newRent.setReturnDate(today);
+        rentalRepository.save(newRent);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+            "/rentals/{id}/return",
+            HttpMethod.PUT,
+            null,
+            String.class,
+            newRent.getId());
+
+            assertNotNull(response.getBody());
+            assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, response.getStatusCode());
+            assertEquals("This rent has already been finalized!", response.getBody());
+            assertEquals(1, rentalRepository.count());
+
+    }
+
+
 
 }
